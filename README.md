@@ -6,6 +6,8 @@ import java.util.*;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -13,9 +15,11 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -38,11 +42,13 @@ public class AfekaInstruments extends javafx.application.Application{
 	private TextField txtPrice = new TextField();
 	private TextField searchField = new TextField();
 	private ArrayList<MusicalInstrument> allInstruments = new ArrayList<MusicalInstrument>();
-	private ArrayList<MusicalInstrument> temp2 = (ArrayList<MusicalInstrument>) allInstruments.clone();
+	private ArrayList<MusicalInstrument> temp2 = new ArrayList<MusicalInstrument>();
+	private File file;
 	private int counter = 0;
+	@SuppressWarnings({ "unchecked", "static-access" })
 	@Override
 	public void start(Stage primaryStage){
-		File file = getInstrumentsFileFromUser();
+		file = getInstrumentsFileFromUser();
 		loadInstrumentsFromFile(file, allInstruments);
 		primaryStage.setTitle("Afeka Instruments Music Store");
 		setTop();
@@ -59,21 +65,93 @@ public class AfekaInstruments extends javafx.application.Application{
 			setMid();
 		});
 		Gobtn.setOnAction(e ->{
-			allInstruments = temp2;
-			ArrayList<MusicalInstrument> temp = new ArrayList<MusicalInstrument>();
-			for (int i = 0; i < allInstruments.size(); i++) {
-				if (allInstruments.get(i).toString().contains(searchField.getText()))
-					temp.add(allInstruments.get(i));
+			if (searchField.getText()=="")
+				setMid();
+			else
+			{
+				temp2 = (ArrayList<MusicalInstrument>) allInstruments.clone();
+				ArrayList<MusicalInstrument> temp = new ArrayList<MusicalInstrument>();
+				for (int i = 0; i < allInstruments.size(); i++) 
+				{
+					String one = allInstruments.get(i).toString();
+					String two = searchField.getText();
+					if (one.contains(two))
+						temp.add(allInstruments.get(i));
+				}
+				allInstruments = temp;
+				counter = 0;
+				setMid();
 			}
-			temp2 = (ArrayList<MusicalInstrument>) allInstruments.clone();
-			allInstruments = temp;
-			counter = 0;
+		});
+		searchField.setOnKeyPressed(e -> {
+			//if (e.getCode() == KeyCode.ENTER)
+				////////Gobtn.getOnAction();
+		});
+		btnDel.setOnAction(e ->{
+			allInstruments.remove(counter);
 			setMid();
+		});
+		searchField.setOnKeyPressed(e -> {
+			//if (e.getCode() == KeyCode.DELETE)
+				////////Gobtn.getOnAction(); על המסך ולא על הטקסטפילד
+		});
+		btnClear.setOnAction(e -> {
+			allInstruments.clear();
+			setMid();
+		});
+		btnAdd.setOnAction(e ->{
+			//פותח חלון חדש עם קומבובוקס
+			Stage addStage = new Stage();
+			BorderPane addPane = new BorderPane();
+		    Scene addWin = new Scene(addPane,600,300);
+		    HBox layout = new HBox(10);
+		    ObservableList<String> options = FXCollections.observableArrayList("Guitar","Bass","Flute","Saxophone");
+		    ComboBox<String> cm = new ComboBox<String>(options);
+		    cm.setPromptText("Choose Instrument Type Here");
+			layout.setPadding(new Insets(20,20,20,20));
+			layout.getChildren().add(cm);
+			layout.setAlignment(Pos.CENTER);
+			cm.setOnAction(r -> {
+				//layout.setAlignment(Pos.TOP_CENTER);
+				GridPane grid = new GridPane();
+				grid.setPadding(new Insets(10,10,10,10));
+				grid.setVgap(20);
+				grid.setHgap(10);
+				Label lblBrand = new Label("Brand: ");
+				grid.setConstraints(lblBrand, 0, 0);
+				TextField txtBrandGuitar = new TextField();
+				txtBrandGuitar.setPromptText("Ex: Gibson");
+				grid.setConstraints(txtBrandGuitar, 1, 0);
+				Label lblPrice = new Label("Price: ");
+				grid.setConstraints(lblPrice, 0, 1);
+				TextField txtPriceGuitar = new TextField();
+				txtPriceGuitar.setPromptText("Ex: 7500");
+				grid.setConstraints(txtPriceGuitar, 1, 1);
+				Label lblNumOfString = new Label("Number of Strings: ");
+				grid.setConstraints(lblNumOfString, 0, 2);
+				TextField txtNumOfString = new TextField();
+				txtNumOfString.setPromptText("Ex: 6");
+				grid.setConstraints(txtNumOfString, 1, 2);
+				Label lblType = new Label("Guitar Type: ");
+				grid.setConstraints(lblType, 0, 3);
+			    ObservableList<String> optionsGuitar = FXCollections.observableArrayList("Classic","Acoustic","Electric");
+				ComboBox<String> cmGuitar = new ComboBox<String>(optionsGuitar);
+				cmGuitar.setPromptText("Type");
+				grid.setConstraints(cmGuitar, 1, 3);
+				Button btnAdd = new Button("Add");
+				grid.setConstraints(btnAdd, 1, 4);
+				grid.setAlignment(Pos.CENTER);
+				//addPane.setTop(layout);
+				//layout.setAlignment(Pos.TOP_CENTER);
+				addPane.setTop(grid);
+			});
+			addPane.setCenter(layout);
+		    addStage.setScene(addWin);
+			addStage.show();
 		});
 		primaryStage.setScene(myWindow);
 		primaryStage.show();
 	}
-
 	public void setTop(){
 		searchField.setPrefWidth(630);
 		searchField.setPromptText("Search...");
@@ -85,7 +163,14 @@ public class AfekaInstruments extends javafx.application.Application{
 	}
 	@SuppressWarnings("static-access")
 	public void setMid(){
-		if (counter>allInstruments.size()-4)
+		if (allInstruments.size()==0){
+			txtType.setText("");
+			txtBrand.setText("");
+			txtPrice.setText("");
+		}
+		else
+		{
+		if (counter>=allInstruments.size())
 			counter = 0;
 		if (counter<0)
 			counter = allInstruments.size()-1;
@@ -112,6 +197,7 @@ public class AfekaInstruments extends javafx.application.Application{
 		grid.getChildren().addAll(lblType,txtType,lblBrand,txtBrand,lblPrice,txtPrice,btnAdd,btnDel,btnClear);
 		grid.setAlignment(Pos.CENTER);
 		mainPane.setCenter(grid);
+		}
 	}
 	public void setLeft(){
 		HBox HBoxbtnLeft = new HBox();
