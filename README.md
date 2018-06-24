@@ -15,6 +15,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -23,7 +24,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -85,7 +85,7 @@ public class AfekaInstruments extends javafx.application.Application{
 		});
 		searchField.setOnKeyPressed(e -> {
 			//if (e.getCode() == KeyCode.ENTER)
-				////////Gobtn.getOnAction();
+			////////Gobtn.getOnAction();
 		});
 		btnDel.setOnAction(e ->{
 			allInstruments.remove(counter);
@@ -93,7 +93,7 @@ public class AfekaInstruments extends javafx.application.Application{
 		});
 		searchField.setOnKeyPressed(e -> {
 			//if (e.getCode() == KeyCode.DELETE)
-				////////Gobtn.getOnAction(); על המסך ולא על הטקסטפילד
+			////////Gobtn.getOnAction(); על המסך ולא על הטקסטפילד
 		});
 		btnClear.setOnAction(e -> {
 			allInstruments.clear();
@@ -103,50 +103,144 @@ public class AfekaInstruments extends javafx.application.Application{
 			//פותח חלון חדש עם קומבובוקס
 			Stage addStage = new Stage();
 			BorderPane addPane = new BorderPane();
-		    Scene addWin = new Scene(addPane,600,300);
-		    HBox layout = new HBox(10);
-		    ObservableList<String> options = FXCollections.observableArrayList("Guitar","Bass","Flute","Saxophone");
-		    ComboBox<String> cm = new ComboBox<String>(options);
-		    cm.setPromptText("Choose Instrument Type Here");
+			Scene addWin = new Scene(addPane,600,300);
+			HBox layout = new HBox(10);
+			ObservableList<String> options = FXCollections.observableArrayList("Guitar","Bass","Flute","Saxophone");
+			ComboBox<String> cm = new ComboBox<String>(options);
+			cm.setPromptText("Choose Instrument Type Here");
 			layout.setPadding(new Insets(20,20,20,20));
 			layout.getChildren().add(cm);
-			layout.setAlignment(Pos.CENTER);
+			layout.setAlignment(Pos.BOTTOM_CENTER);
+			GridPane grid = new GridPane();
+			grid.setPadding(new Insets(10,10,10,10));
+			grid.setVgap(20);
+			grid.setHgap(10);
+			Label lblBrand = new Label("Brand: ");
+			grid.setConstraints(lblBrand, 0, 0);
+			TextField txtBrandGuitar = new TextField();
+			grid.setConstraints(txtBrandGuitar, 1, 0);
+			Label lblPrice = new Label("Price: ");
+			grid.setConstraints(lblPrice, 0, 1);
+			TextField txtPriceGuitar = new TextField();
+			grid.setConstraints(txtPriceGuitar, 1, 1);
+			Label lblNumOfString = new Label("Number of Strings: ");
+			grid.setConstraints(lblNumOfString, 0, 2);
+			TextField txtNumOfString = new TextField();
+			grid.setConstraints(txtNumOfString, 1, 2);
+			Button btnAdd = new Button("Add");
+			grid.setConstraints(btnAdd, 1, 4);
+			ObservableList<String> optionsGuitar = FXCollections.observableArrayList("Classic","Acoustic","Electric");
+			CheckBox chk = new CheckBox();
+			ComboBox<String> cmGuitar = new ComboBox<String>(optionsGuitar);
+			ObservableList<String> optionsType = FXCollections.observableArrayList("Flute","Recorder","Bass");
+			ComboBox<String> cmType = new ComboBox<String>(optionsType);
+			ObservableList<String> optionsMat = FXCollections.observableArrayList("Wood","Metal","Plastic");
+			ComboBox<String> cmMat = new ComboBox<String>(optionsMat);
+			grid.setAlignment(Pos.CENTER);
 			cm.setOnAction(r -> {
-				//layout.setAlignment(Pos.TOP_CENTER);
-				GridPane grid = new GridPane();
-				grid.setPadding(new Insets(10,10,10,10));
-				grid.setVgap(20);
-				grid.setHgap(10);
-				Label lblBrand = new Label("Brand: ");
-				grid.setConstraints(lblBrand, 0, 0);
-				TextField txtBrandGuitar = new TextField();
-				txtBrandGuitar.setPromptText("Ex: Gibson");
-				grid.setConstraints(txtBrandGuitar, 1, 0);
-				Label lblPrice = new Label("Price: ");
-				grid.setConstraints(lblPrice, 0, 1);
-				TextField txtPriceGuitar = new TextField();
-				txtPriceGuitar.setPromptText("Ex: 7500");
-				grid.setConstraints(txtPriceGuitar, 1, 1);
-				Label lblNumOfString = new Label("Number of Strings: ");
-				grid.setConstraints(lblNumOfString, 0, 2);
-				TextField txtNumOfString = new TextField();
-				txtNumOfString.setPromptText("Ex: 6");
-				grid.setConstraints(txtNumOfString, 1, 2);
-				Label lblType = new Label("Guitar Type: ");
-				grid.setConstraints(lblType, 0, 3);
-			    ObservableList<String> optionsGuitar = FXCollections.observableArrayList("Classic","Acoustic","Electric");
-				ComboBox<String> cmGuitar = new ComboBox<String>(optionsGuitar);
-				cmGuitar.setPromptText("Type");
-				grid.setConstraints(cmGuitar, 1, 3);
-				Button btnAdd = new Button("Add");
-				grid.setConstraints(btnAdd, 1, 4);
-				grid.setAlignment(Pos.CENTER);
-				//addPane.setTop(layout);
-				//layout.setAlignment(Pos.TOP_CENTER);
-				addPane.setTop(grid);
+				grid.getChildren().clear();
+				switch (cm.getValue()) {
+				case "Guitar":
+					txtBrandGuitar.setPromptText("Ex: Gibson");
+					txtPriceGuitar.setPromptText("Ex: 7500");
+					txtNumOfString.setPromptText("Ex: 6");
+					Label lblType = new Label("Guitar Type: ");
+					grid.setConstraints(lblType, 0, 3);
+					cmGuitar.setPromptText("Type");
+					grid.setConstraints(cmGuitar, 1, 3);
+					grid.getChildren().addAll(btnAdd,lblBrand,txtBrandGuitar,lblPrice,txtPriceGuitar,lblNumOfString,txtNumOfString,lblType,cmGuitar);
+					break;
+
+				case "Bass":
+					txtBrandGuitar.setPromptText("Ex: Fender Jazz");
+					txtPriceGuitar.setPromptText("Ex: 7500");
+					txtNumOfString.setPromptText("Ex: 4");
+					Label lblFretless = new Label("Fretless:");
+					grid.setConstraints(lblFretless, 0, 3);
+					grid.setConstraints(chk, 1, 3);
+					grid.getChildren().addAll(btnAdd,lblBrand,txtBrandGuitar,lblPrice,txtPriceGuitar,lblNumOfString,txtNumOfString,lblFretless,chk);
+					break;
+				case "Flute":
+					txtBrandGuitar.setPromptText("Ex: Levit");
+					txtPriceGuitar.setPromptText("Ex: 300");
+					cmMat.setPromptText("Material");
+					Label lblMat = new Label("Fretless:");
+					grid.setConstraints(lblMat, 0, 2);
+					grid.setConstraints(cmMat, 1, 2);
+					cmType.setPromptText("Type");
+					Label lblFluteType = new Label("Flute Type:");
+					grid.setConstraints(lblFluteType, 0, 3);
+					grid.setConstraints(cmType, 1, 3);
+					grid.getChildren().addAll(btnAdd,lblBrand,txtBrandGuitar,lblPrice,txtPriceGuitar,lblMat,cmMat,lblFluteType,cmType);
+					break;
+				case "Saxophone":
+					txtBrandGuitar.setPromptText("");
+					txtPriceGuitar.setPromptText("");
+					grid.getChildren().addAll(btnAdd,lblBrand,txtBrandGuitar,lblPrice,txtPriceGuitar);
+					break;
+				}
+				addPane.setCenter(grid);
+				btnAdd.setOnAction(t -> {
+					if (Double.parseDouble(txtPriceGuitar.getText()) < 0)
+					{
+						Alert alert = new Alert(AlertType.ERROR);
+						alert.setTitle("Error");
+						alert.setHeaderText("Error");
+						alert.setContentText("Price must be a positive number!");
+						alert.showAndWait();
+					}
+					else
+					{
+						switch (cm.getValue()) {
+						case "Guitar":
+							if (Integer.parseInt(txtNumOfString.getText()) < 0){
+								Alert alert = new Alert(AlertType.ERROR);
+								alert.setTitle("Error");
+								alert.setHeaderText("Error");
+								alert.setContentText("Number of strings cannot be negative!");
+								alert.showAndWait();
+							}
+							else{
+								Guitar g = new Guitar(txtBrandGuitar.getText(),Double.parseDouble(txtPriceGuitar.getText()),Integer.parseInt(txtNumOfString.getText()),cmGuitar.getValue());
+								allInstruments.add(g);
+								setMid();
+								addStage.close();
+							}
+							break;
+
+						case "Bass":
+							if (Integer.parseInt(txtNumOfString.getText()) < 0){
+								Alert alert = new Alert(AlertType.ERROR);
+								alert.setTitle("Error");
+								alert.setHeaderText("Error");
+								alert.setContentText("Number of strings cannot be negative!");
+								alert.showAndWait();
+							}
+							else{
+								Bass g = new Bass(txtBrandGuitar.getText(),Double.parseDouble(txtPriceGuitar.getText()),Integer.parseInt(txtNumOfString.getText()),chk.isSelected());
+								allInstruments.add(g);
+								setMid();
+								addStage.close();
+							}
+							break;
+						case "Flute":
+							Flute g = new Flute(txtBrandGuitar.getText(),Double.parseDouble(txtPriceGuitar.getText()),cmMat.getValue(),cmType.getValue());
+							allInstruments.add(g);
+							setMid();
+							addStage.close();
+							break;
+						case "Saxophone":
+							Saxophone j = new Saxophone(txtBrandGuitar.getText(),Double.parseDouble(txtPriceGuitar.getText()));
+							allInstruments.add(j);
+							setMid();
+							addStage.close();
+							break;
+						}
+					}
+				});
 			});
-			addPane.setCenter(layout);
-		    addStage.setScene(addWin);
+			addPane.setTop(layout);
+			addStage.setScene(addWin);
 			addStage.show();
 		});
 		primaryStage.setScene(myWindow);
@@ -170,33 +264,33 @@ public class AfekaInstruments extends javafx.application.Application{
 		}
 		else
 		{
-		if (counter>=allInstruments.size())
-			counter = 0;
-		if (counter<0)
-			counter = allInstruments.size()-1;
-		GridPane grid = new GridPane();
-		grid.setPadding(new Insets(10,10,10,10));
-		grid.setVgap(20);
-		grid.setHgap(10);
-		Label lblType = new Label("Type: ");
-		grid.setConstraints(lblType, 0, 0);
-		txtType = new TextField(allInstruments.get(counter).getClass().getName());
-		grid.setConstraints(txtType, 1, 0);
-		Label lblBrand = new Label("Brand: ");
-		grid.setConstraints(lblBrand, 0, 1);
-		txtBrand = new TextField(allInstruments.get(counter).getBrand());
-		grid.setConstraints(txtBrand, 1, 1);
-		Label lblPrice = new Label("Price: ");
-		grid.setConstraints(lblPrice, 0, 2);
-		txtPrice = new TextField(Double.toString(allInstruments.get(counter).getPrice()));
-		grid.setConstraints(txtPrice, 1, 2);
-		grid.setConstraints(btnAdd, 0, 3);
-		grid.setHalignment(btnDel, HPos.CENTER);
-		grid.setConstraints(btnDel, 1, 3);
-		grid.setConstraints(btnClear, 2, 3);
-		grid.getChildren().addAll(lblType,txtType,lblBrand,txtBrand,lblPrice,txtPrice,btnAdd,btnDel,btnClear);
-		grid.setAlignment(Pos.CENTER);
-		mainPane.setCenter(grid);
+			if (counter>=allInstruments.size())
+				counter = 0;
+			if (counter<0)
+				counter = allInstruments.size()-1;
+			GridPane grid = new GridPane();
+			grid.setPadding(new Insets(10,10,10,10));
+			grid.setVgap(20);
+			grid.setHgap(10);
+			Label lblType = new Label("Type: ");
+			grid.setConstraints(lblType, 0, 0);
+			txtType = new TextField(allInstruments.get(counter).getClass().getName());
+			grid.setConstraints(txtType, 1, 0);
+			Label lblBrand = new Label("Brand: ");
+			grid.setConstraints(lblBrand, 0, 1);
+			txtBrand = new TextField(allInstruments.get(counter).getBrand());
+			grid.setConstraints(txtBrand, 1, 1);
+			Label lblPrice = new Label("Price: ");
+			grid.setConstraints(lblPrice, 0, 2);
+			txtPrice = new TextField(Double.toString(allInstruments.get(counter).getPrice()));
+			grid.setConstraints(txtPrice, 1, 2);
+			grid.setConstraints(btnAdd, 0, 3);
+			grid.setHalignment(btnDel, HPos.CENTER);
+			grid.setConstraints(btnDel, 1, 3);
+			grid.setConstraints(btnClear, 2, 3);
+			grid.getChildren().addAll(lblType,txtType,lblBrand,txtBrand,lblPrice,txtPrice,btnAdd,btnDel,btnClear);
+			grid.setAlignment(Pos.CENTER);
+			mainPane.setCenter(grid);
 		}
 	}
 	public void setLeft(){
@@ -226,28 +320,7 @@ public class AfekaInstruments extends javafx.application.Application{
 		timeline.play();
 		return timetxt;
 	}
-	public static void main(String[] args) {
-		launch(args);
-		/*ArrayList<MusicalInstrument> allInstruments = new ArrayList<MusicalInstrument>();
-        File file = getInstrumentsFileFromUser();
-
-        loadInstrumentsFromFile(file, allInstruments);
-
-        if(allInstruments.size() == 0) {
-            System.out.println("There are no instruments in the store currently");
-            return;
-        }
-
-        printInstruments(allInstruments);
-
-        int different = getNumOfDifferentElements(allInstruments);
-
-        System.out.println("\n\nDifferent Instruments: " + different);
-
-        MusicalInstrument mostExpensive = getMostExpensiveInstrument(allInstruments);
-
-        System.out.println("\n\nMost Expensive Instrument:\n" + mostExpensive);*/
-	}
+	public static void main(String[] args) {launch(args);}
 
 	public static File getInstrumentsFileFromUser(){
 		boolean stopLoop = true;
